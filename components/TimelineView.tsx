@@ -64,8 +64,9 @@ const TimelineView: React.FC<TimelineViewProps> = ({ entries, onUpdateEntry }) =
 
   let lastDate = '';
 
+  // Increased bottom padding to pb-32 for safe areas
   return (
-    <div className="pb-24 px-4 pt-4 overflow-y-auto h-full no-scrollbar relative">
+    <div className="pb-32 px-4 pt-4 overflow-y-auto h-full no-scrollbar relative">
       {/* Overlay to close emotion picker if open */}
       {editingEmotionId && (
         <div 
@@ -116,7 +117,7 @@ const TimelineView: React.FC<TimelineViewProps> = ({ entries, onUpdateEntry }) =
                     <div className="relative z-50">
                         <button 
                             onClick={() => setEditingEmotionId(isEditing ? null : entry.id)}
-                            className={`text-xs font-bold px-2 py-0.5 rounded-full flex items-center gap-1 transition-all hover:opacity-80`} 
+                            className={`text-xs font-bold px-2 py-0.5 rounded-full flex items-center gap-1 transition-all hover:opacity-80 active:scale-95`} 
                             style={{ backgroundColor: config.color + '20', color: config.color }}
                         >
                           {config.label}
@@ -155,7 +156,7 @@ const TimelineView: React.FC<TimelineViewProps> = ({ entries, onUpdateEntry }) =
                     {entry.audioBase64 && (
                         <button 
                             onClick={() => toggleAudio(entry)}
-                            className="flex items-center justify-center w-6 h-6 rounded-full bg-brand-50 text-brand-600 hover:bg-brand-100 transition-colors ml-1"
+                            className="flex items-center justify-center w-6 h-6 rounded-full bg-brand-50 text-brand-600 hover:bg-brand-100 transition-colors ml-1 active:scale-90"
                             title="Play recording"
                         >
                             {isPlaying ? <Pause size={10} fill="currentColor" /> : <Play size={10} fill="currentColor" />}
@@ -164,7 +165,7 @@ const TimelineView: React.FC<TimelineViewProps> = ({ entries, onUpdateEntry }) =
                   </div>
                 </div>
                 
-                <p className="text-slate-700 leading-relaxed text-sm md:text-base">
+                <p className="text-slate-700 leading-relaxed text-sm md:text-base select-text">
                   {entry.text}
                 </p>
 

@@ -34,3 +34,9 @@ export enum ViewMode {
   CALENDAR = 'CALENDAR',
   STATS = 'STATS'
 }
+
+export interface CloudConfig {
+  url: string;
+  key: string;
+  enabled: boolean;
+}

@@ -1,3 +1,4 @@
+
 import { GoogleGenAI, Type } from "@google/genai";
 import { EmotionType } from "../types";
 
@@ -72,12 +73,12 @@ export const analyzeAudioEntry = async (audioBase64: string): Promise<{ text: st
 
   } catch (error) {
     console.error("Gemini Analysis Error:", error);
-    // Fallback in case of error
+    // Fallback if API is blocked or fails
     return {
-      text: "Error processing audio. Please try again.",
+      text: "Audio recorded (AI processing unavailable). Click to play.",
       emotion: EmotionType.NEUTRAL,
-      tags: ["Error"],
-      category: "Uncategorized"
+      tags: ["Recording"],
+      category: "Unprocessed"
     };
   }
 };

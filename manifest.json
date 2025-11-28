@@ -1,0 +1,16 @@
+{
+  "short_name": "MindFlow",
+  "name": "MindFlow: Thought Archive",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/10626/10626002.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#ffffff",
+  "background_color": "#ffffff",
+  "orientation": "portrait"
+}
