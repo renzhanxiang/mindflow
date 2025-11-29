@@ -3,19 +3,19 @@ import { Entry, EmotionType } from '../types';
 import { EMOTION_CONFIG } from '../constants';
 import { PieChart, Pie, Cell, ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip } from 'recharts';
 import * as d3 from 'd3';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface StatsViewProps {
   entries: Entry[];
 }
 
-// Simple bubble visualization for tags using D3
 const TagBubbleChart: React.FC<{ entries: Entry[] }> = ({ entries }) => {
+  const { t } = useLanguage();
   const svgRef = React.useRef<SVGSVGElement>(null);
 
   React.useEffect(() => {
     if (!svgRef.current || entries.length === 0) return;
 
-    // Aggregate tags
     const tagCounts: Record<string, number> = {};
     entries.forEach(e => {
       e.tags.forEach(t => {
@@ -30,15 +30,12 @@ const TagBubbleChart: React.FC<{ entries: Entry[] }> = ({ entries }) => {
     const width = svgRef.current.clientWidth;
     const height = 200;
     
-    // Clear previous
     d3.select(svgRef.current).selectAll("*").remove();
 
-    // Scale for radius
     const radiusScale = d3.scaleLinear()
       .domain([d3.min(data, d => d.value) || 0, d3.max(data, d => d.value) || 0])
       .range([20, 45]);
 
-    // Force simulation
     const simulation = d3.forceSimulation(data as any)
       .force("charge", d3.forceManyBody().strength(5))
       .force("center", d3.forceCenter(width / 2, height / 2))
@@ -53,13 +50,11 @@ const TagBubbleChart: React.FC<{ entries: Entry[] }> = ({ entries }) => {
       .enter()
       .append("g");
 
-    // Bubbles
     nodes.append("circle")
       .attr("r", (d: any) => radiusScale(d.value))
       .attr("fill", (d: any, i) => d3.schemeTableau10[i % 10])
       .attr("opacity", 0.7);
 
-    // Text
     nodes.append("text")
       .text((d: any) => d.text)
       .attr("text-anchor", "middle")
@@ -76,32 +71,30 @@ const TagBubbleChart: React.FC<{ entries: Entry[] }> = ({ entries }) => {
 
   return (
     <div className="w-full bg-white p-4 rounded-xl shadow-sm border border-slate-100 mb-6">
-      <h3 className="text-sm font-semibold text-gray-700 mb-4">Mind Clusters (Tags)</h3>
+      <h3 className="text-sm font-semibold text-gray-700 mb-4">{t('stats.clusters')}</h3>
       <svg ref={svgRef} className="w-full h-[200px]" />
     </div>
   );
 };
 
-
 const StatsView: React.FC<StatsViewProps> = ({ entries }) => {
-  // Emotion Distribution Data
+  const { t } = useLanguage();
+
   const emotionCounts = entries.reduce((acc, entry) => {
     acc[entry.emotion] = (acc[entry.emotion] || 0) + 1;
     return acc;
   }, {} as Record<EmotionType, number>);
 
   const pieData = Object.entries(emotionCounts).map(([key, value]) => ({
-    name: EMOTION_CONFIG[key as EmotionType].label,
-    value: Number(value), // Ensure value is a number
+    name: t(`emotion.${key}`), // Use translation key
+    value: Number(value),
     color: EMOTION_CONFIG[key as EmotionType].color
   }));
 
-  // Calculate top mood safely
   const topMood = pieData.length > 0 
     ? [...pieData].sort((a, b) => b.value - a.value)[0]
     : null;
 
-  // Mood Flow Data (Last 7 days simplified)
   const last7Days = Array.from({ length: 7 }, (_, i) => {
     const d = new Date();
     d.setDate(d.getDate() - (6 - i));
@@ -109,7 +102,6 @@ const StatsView: React.FC<StatsViewProps> = ({ entries }) => {
   });
 
   const lineData = last7Days.map(dateStr => {
-    // Count entries for this day
     const dayEntries = entries.filter(e => new Date(e.timestamp).toISOString().split('T')[0] === dateStr);
     return {
       date: new Date(dateStr).toLocaleDateString([], { weekday: 'short' }),
@@ -119,16 +111,15 @@ const StatsView: React.FC<StatsViewProps> = ({ entries }) => {
 
   return (
     <div className="pb-24 px-4 pt-4 overflow-y-auto h-full no-scrollbar">
-      <h2 className="text-2xl font-bold text-slate-800 mb-6">Insights</h2>
+      <h2 className="text-2xl font-bold text-slate-800 mb-6">{t('stats.title')}</h2>
 
-      {/* Summary Cards */}
       <div className="grid grid-cols-2 gap-4 mb-6">
         <div className="bg-gradient-to-br from-brand-500 to-brand-600 p-4 rounded-xl text-white shadow-lg">
-          <p className="text-brand-100 text-sm">Total Thoughts</p>
+          <p className="text-brand-100 text-sm">{t('stats.totalThoughts')}</p>
           <p className="text-3xl font-bold">{entries.length}</p>
         </div>
         <div className="bg-white p-4 rounded-xl border border-slate-100 shadow-sm">
-          <p className="text-gray-400 text-sm">Top Mood</p>
+          <p className="text-gray-400 text-sm">{t('stats.topMood')}</p>
           {topMood ? (
             <p className="text-xl font-bold text-slate-700">
               {topMood.name}
@@ -139,9 +130,8 @@ const StatsView: React.FC<StatsViewProps> = ({ entries }) => {
         </div>
       </div>
 
-      {/* Emotion Pie Chart */}
       <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-100 mb-6">
-        <h3 className="text-sm font-semibold text-gray-700 mb-4">Emotional Spectrum</h3>
+        <h3 className="text-sm font-semibold text-gray-700 mb-4">{t('stats.spectrum')}</h3>
         <div className="h-64 w-full">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
@@ -174,9 +164,8 @@ const StatsView: React.FC<StatsViewProps> = ({ entries }) => {
         </div>
       </div>
 
-      {/* Activity Line Chart */}
       <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-100 mb-6">
-        <h3 className="text-sm font-semibold text-gray-700 mb-4">Thinking Activity (Last 7 Days)</h3>
+        <h3 className="text-sm font-semibold text-gray-700 mb-4">{t('stats.activity')}</h3>
         <div className="h-48 w-full">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={lineData}>
@@ -192,7 +181,6 @@ const StatsView: React.FC<StatsViewProps> = ({ entries }) => {
         </div>
       </div>
 
-      {/* D3 Word Cloud */}
       <TagBubbleChart entries={entries} />
 
     </div>

@@ -16,6 +16,7 @@ export interface Entry {
   tags: string[];
   category: string; // New field for classification (e.g., Work, Philosophy, Life)
   audioBase64?: string; // Optional: store the audio snippet
+  aiAnalysis?: string; // New: AI Insight/Reflection
 }
 
 export interface ChartDataPoint {
@@ -32,11 +33,17 @@ export interface WordCloudItem {
 export enum ViewMode {
   TIMELINE = 'TIMELINE',
   CALENDAR = 'CALENDAR',
-  STATS = 'STATS'
+  STATS = 'STATS',
+  MANAGE_DATA = 'MANAGE_DATA'
 }
 
 export interface CloudConfig {
   url: string;
   key: string;
   enabled: boolean;
+}
+
+export enum Language {
+  EN = 'en',
+  ZH = 'zh'
 }

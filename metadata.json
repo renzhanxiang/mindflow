@@ -2,7 +2,6 @@
   "name": "MindFlow",
   "description": "Your personal thought archive and emotional map. Capture inspiration, track mood trajectories, and visualize your thinking patterns.",
   "requestFramePermissions": [
-    "microphone",
-    "geolocation"
+    "microphone"
   ]
 }

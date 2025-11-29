@@ -2,12 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { StorageService } from '../services/storage';
 import { Lock, User, ArrowRight, Sparkles, Settings, Cloud, Database, Mail, CheckCircle, Code } from 'lucide-react';
 import { CloudConfig } from '../types';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface AuthViewProps {
   onLoginSuccess: (username: string) => void;
 }
 
 const AuthView: React.FC<AuthViewProps> = ({ onLoginSuccess }) => {
+  const { t } = useLanguage();
   const [isLogin, setIsLogin] = useState(true);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -82,7 +84,7 @@ const AuthView: React.FC<AuthViewProps> = ({ onLoginSuccess }) => {
         <div className="bg-white w-full max-w-lg rounded-2xl shadow-xl p-6 flex flex-col max-h-[90vh]">
           <div className="flex items-center gap-2 mb-4 text-brand-600">
             <Database size={24} />
-            <h2 className="text-xl font-bold text-slate-800">Data Settings</h2>
+            <h2 className="text-xl font-bold text-slate-800">{t('auth.settings')}</h2>
           </div>
           
           <div className="flex gap-2 mb-4 border-b border-gray-100">
@@ -180,7 +182,7 @@ CREATE POLICY "Users can only access their own data" ON user_data
               onClick={() => setShowSettings(false)}
               className="flex-1 py-3 text-gray-500 font-bold hover:bg-gray-50 rounded-xl"
             >
-              Cancel
+              {t('modal.cancel')}
             </button>
             <button 
               onClick={handleSaveSettings}
@@ -202,9 +204,9 @@ CREATE POLICY "Users can only access their own data" ON user_data
                 <div className="w-16 h-16 bg-blue-100 text-brand-600 rounded-full flex items-center justify-center mx-auto mb-6">
                     <Mail size={32} />
                 </div>
-                <h2 className="text-2xl font-bold text-slate-800 mb-2">Check Your Email</h2>
+                <h2 className="text-2xl font-bold text-slate-800 mb-2">{t('auth.checkEmail')}</h2>
                 <p className="text-gray-500 mb-6">
-                    We've sent a confirmation link to <span className="font-semibold text-slate-700">{username}</span>.
+                    {t('auth.emailSent')} <span className="font-semibold text-slate-700">{username}</span>.
                 </p>
                 <div className="bg-yellow-50 border border-yellow-100 rounded-lg p-4 mb-6 text-left">
                     <p className="text-xs text-yellow-800 font-medium flex gap-2">
@@ -219,7 +221,7 @@ CREATE POLICY "Users can only access their own data" ON user_data
                     onClick={() => { setConfirmationPending(false); setIsLogin(true); }}
                     className="w-full py-3 bg-slate-800 text-white font-bold rounded-xl shadow-lg hover:bg-slate-900 transition-colors"
                 >
-                    Back to Login
+                    {t('auth.backLogin')}
                 </button>
             </div>
         </div>
@@ -248,7 +250,7 @@ CREATE POLICY "Users can only access their own data" ON user_data
           </div>
           <h1 className="text-3xl font-black text-slate-800 tracking-tight">MindFlow</h1>
           <div className="flex items-center gap-1.5 mt-1">
-             <p className="text-gray-500 font-medium text-sm">Archive of You</p>
+             <p className="text-gray-500 font-medium text-sm">{t('app.subtitle')}</p>
              {cloudConfig.enabled ? (
                <span className="flex items-center gap-0.5 text-[10px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded border border-green-200 font-bold">
                  <Cloud size={10} /> Cloud
@@ -269,20 +271,20 @@ CREATE POLICY "Users can only access their own data" ON user_data
             onClick={() => { setIsLogin(true); setError(''); }}
             className={`flex-1 py-2 text-sm font-bold text-center z-10 relative transition-colors ${isLogin ? 'text-slate-800' : 'text-gray-400'}`}
           >
-            Login
+            {t('auth.login')}
           </button>
           <button 
             onClick={() => { setIsLogin(false); setError(''); }}
             className={`flex-1 py-2 text-sm font-bold text-center z-10 relative transition-colors ${!isLogin ? 'text-slate-800' : 'text-gray-400'}`}
           >
-            Register
+            {t('auth.register')}
           </button>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <label className="text-xs font-semibold text-gray-500 uppercase ml-1">
-              {cloudConfig.enabled ? 'Email' : 'Username'}
+              {cloudConfig.enabled ? t('auth.email') : t('auth.username')}
             </label>
             <div className="relative group">
               <User className="absolute left-4 top-3.5 w-5 h-5 text-gray-400 group-focus-within:text-brand-500 transition-colors" />
@@ -297,7 +299,7 @@ CREATE POLICY "Users can only access their own data" ON user_data
           </div>
 
           <div className="space-y-2">
-            <label className="text-xs font-semibold text-gray-500 uppercase ml-1">Password</label>
+            <label className="text-xs font-semibold text-gray-500 uppercase ml-1">{t('auth.password')}</label>
             <div className="relative group">
               <Lock className="absolute left-4 top-3.5 w-5 h-5 text-gray-400 group-focus-within:text-brand-500 transition-colors" />
               <input
@@ -312,7 +314,7 @@ CREATE POLICY "Users can only access their own data" ON user_data
 
           {!isLogin && (
             <div className="space-y-2 animate-in slide-in-from-top-2 duration-300">
-              <label className="text-xs font-semibold text-gray-500 uppercase ml-1">Confirm Password</label>
+              <label className="text-xs font-semibold text-gray-500 uppercase ml-1">{t('auth.confirmPassword')}</label>
               <div className="relative group">
                 <Lock className="absolute left-4 top-3.5 w-5 h-5 text-gray-400 group-focus-within:text-brand-500 transition-colors" />
                 <input
@@ -337,7 +339,7 @@ CREATE POLICY "Users can only access their own data" ON user_data
             disabled={loading}
             className="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-4 rounded-xl shadow-lg shadow-slate-300/50 flex items-center justify-center gap-2 transition-all active:scale-95 mt-4 group disabled:opacity-70 disabled:cursor-not-allowed"
           >
-            {loading ? 'Processing...' : (isLogin ? 'Start Thinking' : 'Create Account')}
+            {loading ? 'Processing...' : (isLogin ? t('auth.start') : t('auth.createAccount'))}
             {!loading && <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />}
           </button>
         </form>
@@ -345,8 +347,8 @@ CREATE POLICY "Users can only access their own data" ON user_data
       
       <p className="mt-8 text-gray-400 text-sm text-center">
         {cloudConfig.enabled 
-          ? "Cloud Sync Active. Data is stored in your database." 
-          : "Local Mode. Data stays on this device."}
+          ? t('auth.mode.cloud')
+          : t('auth.mode.local')}
       </p>
     </div>
   );

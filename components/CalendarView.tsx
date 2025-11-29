@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Entry, EmotionType } from '../types';
 import { EMOTION_CONFIG } from '../constants';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface CalendarViewProps {
   entries: Entry[];
@@ -9,6 +10,7 @@ interface CalendarViewProps {
 }
 
 const CalendarView: React.FC<CalendarViewProps> = ({ entries, onSelectDate }) => {
+  const { language } = useLanguage();
   const [currentDate, setCurrentDate] = useState(new Date());
 
   const getDaysInMonth = (year: number, month: number) => new Date(year, month + 1, 0).getDate();
@@ -22,7 +24,6 @@ const CalendarView: React.FC<CalendarViewProps> = ({ entries, onSelectDate }) =>
   const prevMonth = () => setCurrentDate(new Date(year, month - 1, 1));
   const nextMonth = () => setCurrentDate(new Date(year, month + 1, 1));
 
-  // Group entries by day
   const entriesByDay: Record<number, Entry[]> = {};
   entries.forEach(entry => {
     const d = new Date(entry.timestamp);
@@ -33,10 +34,8 @@ const CalendarView: React.FC<CalendarViewProps> = ({ entries, onSelectDate }) =>
     }
   });
 
-  // Determine dominant emotion for a day
   const getDominantEmotion = (dayEntries: Entry[]): EmotionType | null => {
     if (!dayEntries || dayEntries.length === 0) return null;
-    // Simple mode: most frequent
     const counts: Record<string, number> = {};
     dayEntries.forEach(e => counts[e.emotion] = (counts[e.emotion] || 0) + 1);
     const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
@@ -44,12 +43,10 @@ const CalendarView: React.FC<CalendarViewProps> = ({ entries, onSelectDate }) =>
   };
 
   const days = [];
-  // Empty slots for previous month
   for (let i = 0; i < firstDay; i++) {
     days.push(<div key={`empty-${i}`} className="h-24 md:h-32 bg-gray-50/50"></div>);
   }
 
-  // Days
   for (let d = 1; d <= daysInMonth; d++) {
     const dayEntries = entriesByDay[d];
     const dominantEmotion = getDominantEmotion(dayEntries);
@@ -86,7 +83,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({ entries, onSelectDate }) =>
     <div className="pb-24 pt-4 h-full flex flex-col no-scrollbar overflow-y-auto">
        <div className="flex items-center justify-between px-6 mb-4">
          <h2 className="text-xl font-bold text-slate-800">
-           {currentDate.toLocaleDateString([], { month: 'long', year: 'numeric' })}
+           {currentDate.toLocaleDateString(language === 'zh' ? 'zh-CN' : 'en-US', { month: 'long', year: 'numeric' })}
          </h2>
          <div className="flex gap-2">
            <button onClick={prevMonth} className="p-2 rounded-full hover:bg-gray-100"><ChevronLeft size={20}/></button>
